@@ -1,15 +1,31 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using Utilities.Contract;
 
 namespace Api.Controllers
 {
-    [Authorize]
     public abstract class CssControllerBase : ControllerBase
     {
         [NonAction]
-        public virtual ActionResult HandleResponse(int statusCode = StatusCodes.Status200OK)
+        public virtual ActionResult HandleResponse(IResponseWrappers responseWrappers, int statusCode = StatusCodes.Status200OK)
         {
-            return this.StatusCode(statusCode);
+            if (responseWrappers.HasMessages)
+            {
+                statusCode = StatusCodes.Status400BadRequest;
+
+                return this.StatusCode(
+                    statusCode,
+                    responseWrappers.ToMessageStatus(
+                        ReasonPhrases.GetReasonPhrase(statusCode),
+                        statusCode.ToString()));
+            }
+
+            var response = responseWrappers.ToResponse(
+                ReasonPhrases.GetReasonPhrase(statusCode),
+                statusCode.ToString());
+
+            return this.StatusCode(statusCode, response);
         }
     }
 }
