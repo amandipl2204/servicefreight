@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers.V1
 {
     [ApiVersion("1.0")]
-    [Route("v1/manufacture/plant")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class PlantController : CssControllerBase
     {
